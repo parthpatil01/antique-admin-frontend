@@ -10,10 +10,10 @@ const ProductInsert = () => {
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    setImages([...e.target.files]);
   };
 
   /* excel upload*/
@@ -29,7 +29,7 @@ const ProductInsert = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await axios.post('https://grand-vivacious-lemur.glitch.me/api/products/bulk-export', formData, {
+      const response = await axios.post('http://localhost:5000/api/products/bulk-export', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -57,9 +57,11 @@ const ProductInsert = () => {
       formData.append('category', category);
       formData.append('price', parseFloat(price));
       formData.append('quantity', parseFloat(quantity));
-      formData.append('image', image);
+      images.forEach((image, index) => {
+        formData.append('images', image);
+      });
 
-      const response = await axios.post('https://grand-vivacious-lemur.glitch.me/api/products', formData, {
+      const response = await axios.post('http://localhost:5000/api/products', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -104,7 +106,7 @@ const ProductInsert = () => {
                 <input type="text" className="form-control" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
               </div>
               <div className="form-group">
-                <input type="file" className="form-control-file" accept="image/*" onChange={handleImageChange} />
+                <input type="file" className="form-control-file" accept="image/*" multiple onChange={handleImageChange} />
               </div>
               <button type="button" className="btn btn-primary btn-block" onClick={handleSubmit}>Add Product</button>
             </form>
@@ -129,4 +131,3 @@ const ProductInsert = () => {
 };
 
 export default ProductInsert;
-
